@@ -211,8 +211,9 @@ void kernel(V& psi, unsigned id5, unsigned id4, unsigned id3, unsigned id2, unsi
 
 
 #ifndef _MSC_VER
+  int max_threads = omp_get_max_threads();
 	if (ctrlmask == 0){
-		#pragma omp for collapse(LOOP_COLLAPSE6) schedule(static)
+    #pragma omp parallel for num_threads(max_threads) collapse(LOOP_COLLAPSE6) schedule(static)
 		for (std::size_t i0 = 0; i0 < n; i0 += 2 * dsorted[0]){
 			for (std::size_t i1 = 0; i1 < dsorted[0]; i1 += 2 * dsorted[1]){
 				for (std::size_t i2 = 0; i2 < dsorted[1]; i2 += 2 * dsorted[2]){
@@ -230,7 +231,7 @@ void kernel(V& psi, unsigned id5, unsigned id4, unsigned id3, unsigned id2, unsi
 		}
 	}
 	else{
-		#pragma omp for collapse(LOOP_COLLAPSE6) schedule(static)
+    #pragma omp parallel for num_threads(max_threads) collapse(LOOP_COLLAPSE6) schedule(static)
 		for (std::size_t i0 = 0; i0 < n; i0 += 2 * dsorted[0]){
 			for (std::size_t i1 = 0; i1 < dsorted[0]; i1 += 2 * dsorted[1]){
 				for (std::size_t i2 = 0; i2 < dsorted[1]; i2 += 2 * dsorted[2]){

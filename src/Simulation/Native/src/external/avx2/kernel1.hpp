@@ -46,10 +46,10 @@ void kernel(V& psi, unsigned id0, M const& matrix, std::size_t ctrlmask)
 		}
 	}
 
-
 #ifndef _MSC_VER
+  int max_threads = omp_get_max_threads();
 	if (ctrlmask == 0){
-		#pragma omp for collapse(LOOP_COLLAPSE1) schedule(static)
+		#pragma omp parallel for num_threads(max_threads) collapse(LOOP_COLLAPSE1) schedule(static)
 		for (std::size_t i0 = 0; i0 < n; i0 += 2 * dsorted[0]){
 			for (std::size_t i1 = 0; i1 < dsorted[0]; ++i1){
 				kernel_core(psi, i0 + i1, dsorted[0], mm, mmt);
@@ -57,7 +57,7 @@ void kernel(V& psi, unsigned id0, M const& matrix, std::size_t ctrlmask)
 		}
 	}
 	else{
-		#pragma omp for collapse(LOOP_COLLAPSE1) schedule(static)
+		#pragma omp parallel for num_threads(max_threads) collapse(LOOP_COLLAPSE1) schedule(static)
 		for (std::size_t i0 = 0; i0 < n; i0 += 2 * dsorted[0]){
 			for (std::size_t i1 = 0; i1 < dsorted[0]; ++i1){
 				if (((i0 + i1)&ctrlmask) == ctrlmask)
@@ -68,7 +68,6 @@ void kernel(V& psi, unsigned id0, M const& matrix, std::size_t ctrlmask)
 #else
 	std::intptr_t zero = 0;
 	std::intptr_t dmask = dsorted[0];
-
 	if (ctrlmask == 0){
 		#pragma omp parallel for schedule(static)
 		for (std::intptr_t i = 0; i < static_cast<std::intptr_t>(n); ++i)
